@@ -1,0 +1,54 @@
+.header {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    min-height: 10vh;
+    
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--text-color);
+    border-width: thin;
+}
+
+h1 {
+    padding: 1rem;
+    color: var(--text-color);
+}
+
+.header-buttons button {
+    position: relative;
+    margin: 1rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    background: none;
+    color: var(--text-color);
+    border-radius: 0px;
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: var(--bg-color-main);
+    transition: width 0.3s ease-in-out;
+}
+
+button img {
+    width: 20px;
+    height: 20px;
+    filter: var(--filter-invert);
+}
+
+button:hover::after {
+    width: 100%;
+}
+

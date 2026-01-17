@@ -1,0 +1,25 @@
+
+.undefined-task {
+
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    text-align: center;
+    align-items: center;
+}
+
+.add-button {
+    background-color: #c7c7c769;
+    border: none;
+    border-radius: 50%;
+    margin-top: 20px;
+    padding: 10px 17px;
+    color: var(--text-color);
+    transition: 0.3s;
+}
+
+.add-button:hover {
+    background-color: var(--button-bg-hover);
+    cursor: pointer;
+}

@@ -1,0 +1,76 @@
+.info-task-set {
+    position: absolute;
+    transform: scale(1.4);
+    background-color: var(--bg-color);
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+    padding: 20px;
+    z-index: 1000;
+    transition: 0.3s;
+
+
+    width: 500px;
+    height: 180px;
+    animation: appearInfoTask 0.4s ease-in-out;
+}
+
+.info-task-set h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.info-task-set input{
+    outline: none;
+    border: none;
+    font-weight: normal;
+    font-size: 0.8rem;
+    
+    width: 90%;
+    border-radius: 5px;
+    background-color: var(--bg-primary);
+    color: var(--text-color);
+}
+
+.info-task-set input:first-child {
+    font-size: 1.3rem;
+    font-weight: bold;  
+
+    margin-top: 8px;
+    border-radius: 5px;
+
+    color: var(--text-color);
+}
+
+.info-task-set button {
+    transform: translateY(180%);
+    transition: transform 0.3s;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--bg-color-main);
+    color: #ffffff;
+    cursor: pointer;
+    transition: 0.3s;
+
+    float: right;
+
+}
+
+.info-task-set button:hover {
+    background-color: var(--button-bg-hover);
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+
+@keyframes appearInfoTask {
+    from {
+        opacity: 0;
+        transform: scale(0.8)
+    }
+    
+    to {
+        opacity: 1;
+        transform: scale(1.4);
+    }
+}
