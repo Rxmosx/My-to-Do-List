@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="darkBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+
+    <linearGradient id="glassLayer" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255, 255, 255, 0.15)" />
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0.03)" />
+    </linearGradient>
+
+    <linearGradient id="neonBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+  </defs>
+
+  <rect width="32" height="32" rx="9" fill="url(#darkBg)" />
+
+  <circle cx="24" cy="12" r="7" fill="#6366f1" opacity="0.4" filter="blur(3px)" />
+
+  <rect width="20" height="20" x="6" y="6" rx="6" fill="url(#glassLayer)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" />
+
+  <path d="M7 12 C 7 7, 25 7, 25 12" fill="none" stroke="rgba(255, 255, 255, 0.1)" stroke-width="0.5" />
+
+  <path d="M11 16 l3 3 l7 -7" fill="none" stroke="url(#neonBlue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
