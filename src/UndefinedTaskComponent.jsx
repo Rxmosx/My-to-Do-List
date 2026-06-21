@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import './style/undefinedTask.css'
 
-function UndefinedTaskComponent({ onAddTask }) {
+function UndefinedTaskComponent({ onAddTask, handleInfoTask }) {
+
+
 
     return (
-        <div className="undefined-task">
-            <p style={{ color: 'var(--text-color)' }}>No tasks included</p>
+        <div className="empty-state-container">
+            <div className="empty-state-icon">
+                    
+            </div>
 
-            <button className="add-button" onClick= {() => onAddTask("New Task")} style={{ color: 'var(--text-color)' }}><strong>+</strong></button>
-
+            <h2>No tasks yet. Time to create!</h2>
         </div>
     )
 }

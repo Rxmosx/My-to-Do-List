@@ -1,25 +1,107 @@
 
-.undefined-task {
-
-    display: flex;
-    flex-direction: column;
-    font-size: 1.5rem;
-    color: var(--text-color);
-    text-align: center;
-    align-items: center;
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  margin: auto;
+  max-width: 360px;
 }
 
-.add-button {
-    background-color: #c7c7c769;
-    border: none;
-    border-radius: 50%;
-    margin-top: 20px;
-    padding: 10px 17px;
-    color: var(--text-color);
-    transition: 0.3s;
+.empty-state-container h2 {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin: 24px 0;
 }
 
-.add-button:hover {
-    background-color: var(--button-bg-hover);
-    cursor: pointer;
+
+.empty-state-btn {
+  background: rgba(16, 185, 129, 0.2); 
+  color: #10b981; 
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
+  padding: 12px 32px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.empty-state-btn:hover {
+  background: rgba(16, 185, 129, 0.35);
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px);
+}
+
+
+.empty-state-icon {
+  position: relative;
+  width: 100px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box-neon {
+  width: 70px;
+  height: 40px;
+  border: 2px solid #60a5fa;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.2);
+}
+
+.box-neon::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 20px;
+  right: 20px;
+  height: 8px;
+  background: #1e293b; 
+  border-bottom: 2px solid #60a5fa;
+  border-radius: 0 0 4px 4px;
+}
+
+.cloud-neon {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  width: 35px;
+  height: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #a78bfa; 
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.2);
+}
+
+.cloud-neon::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  background: #1e293b;
+  border: 2px solid #a78bfa;
+  border-bottom: none;
+  border-radius: 50%;
+}
+
+.pencil-neon {
+  position: absolute;
+  width: 6px;
+  height: 25px;
+  background: #34d399; /* Lápis Verde */
+  border-radius: 2px;
+  top: -15px;
+  right: 15px;
+  transform: rotate(30deg);
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
 }

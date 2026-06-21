@@ -1,29 +1,73 @@
-import {useState} from 'react'
-import Header from './Header.jsx'
-import './style/taskComponent.css'
+import './style/taskComponent.css';
+import './style/App.css';
+import { useState } from 'react';
 
-function Task({task, onRemoveTask}) {  
+function TaskComponent({ task, onRemoveTask, onEdit }) {  
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // NOVO: Controla a aba
+  
+  const priorityClass = task.priority ? task.priority.toLowerCase() : 'medium';
 
-    const [isHovered, setIsHovered] = useState(false);
+  const handleCheck = (e) => {
+    e.stopPropagation(); 
+    setIsRemoving(true);
+    onRemoveTask(task.id); 
+  };
 
+  const handleToggleMenu = (e) => {
+    e.stopPropagation();
+    setIsMenuOpen(prev => !prev);
+  };
 
-    return (
-        <div className="task-item" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} style={{width: 'var(--width-item)'}}>
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    setIsMenuOpen(false); 
+    onEdit(task);         
+  };
 
-            <div className="task-details">
-                <input className="task-checkbox" type="checkbox" checked={task.completed} onChange={() => onToggleTaskCompletion(task.id)} />
-                
-                <div className="task-text">
-                    <p><strong>{task.name}</strong> </p>
-                    <p><strong>{task.description}</strong> </p>
-                </div>
-                    
+  return (
+    <div 
+      className={`task-item ${isRemoving ? 'checked' : ''}`}
+      onMouseLeave={() => setIsMenuOpen(false)}
+    >
+      <div className='task-main'>
+        <div className="task-details">
+          <input 
+            className="task-checkbox" 
+            type="checkbox" 
+            checked={isRemoving || task.completed} 
+            onChange={handleCheck}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <p className="task-title">{task.name}</p>
         </div>
 
-        <div></div>
-            {isHovered && <p className="hover-msg" onClick={() => onRemoveTask(task.id)}>x</p>}
+        <div className="task-meta">
+          <span className={`priority-tag ${priorityClass}`}>
+            {task.priority || 'Undefined'}
+          </span>
+          <span className="task-date">{task.date}</span>
+          
+         
+          <div className="options-container" style={{ position: 'relative' }}>
+            <button className="task-options" onClick={handleToggleMenu}>•••</button>
+            
+            {isMenuOpen && (
+              <div className="task-dropdown" onClick={(e) => e.stopPropagation()}>
+                <p onClick={handleEditClick}>Edit Task</p>
+              </div>
+            )}
+          </div>
         </div>
-    )
+      </div>
+
+      {task.description && (
+        <div className="task-description">
+          {task.description}
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default Task
+export default TaskComponent;

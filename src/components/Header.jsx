@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './style/header.css'
+import '../style/component/header'
 import themeModeIcon from "./assets/noite-dia.png"
 
 
@@ -38,10 +38,10 @@ function Header({onAddTask, onRemoveTask, toggleTheme, handleInfoTask}) {
             <h1 style={{ color: 'var(--text-color)' }}>My To-<label style={{ color: '#dd3b29' }}>Do</label> List</h1>
 
             <div className="header-buttons">
-                <button onClick={handleAddTask} >Add Task</button>
-                <button onClick={handleRemoveTask} >Remove Task</button>
+                <button onClick={handleAddTask} className="header-button">Add Task</button>
+                <button onClick={handleRemoveTask} className="header-button">Remove Task</button>
 
-                <button onClick={() => handleToggleTheme()} ><img src={themeModeIcon} alt="Dark Mode" /></button>
+                <button onClick={() => handleToggleTheme()} className="header-button"><img src={themeModeIcon} alt="Dark Mode" /></button>
             </div>
         </header>
     )
