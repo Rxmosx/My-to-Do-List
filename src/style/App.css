@@ -10,21 +10,26 @@
   --text-muted: #94a3b8;
 }
 
-body {
+html, body {
   margin: 0;
   padding: 0;
-  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, #1e1b4b, #0f172a); 
+  background-attachment: fixed; 
+  color: var(--text-dark);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  overscroll-behavior: none; 
+}
+
+#root {
+  width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  
-
-  background: linear-gradient(135deg, #0f172a 0%, #0b1329 50%, #1e1b4b 100%);
-  position: relative;
-  overflow: hidden;
 }
-
 
 body::before, body::after {
   content: '';
