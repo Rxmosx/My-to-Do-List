@@ -95,7 +95,7 @@ function App() {
     <>
       <div className="app-container">
         <aside className="sidebar">
-          {/* ... Seu menu lateral continua igualzinho aqui ... */}
+          
           <h1>My To-<span>Do</span> List</h1>
           <nav className="sidebar-menu">
             <p 
@@ -119,6 +119,10 @@ function App() {
             <p 
             className={activeFilter === 'Personal' ? 'active' : ''} 
             onClick={() => setActiveFilter('Personal')}>Personal</p>
+
+            <p 
+            className={activeFilter === 'Shopping' ? 'active' : ''} 
+            onClick={() => setActiveFilter('Shopping')}>Shopping</p>
           </nav>
         </aside>
 
@@ -137,7 +141,11 @@ function App() {
 
           <div className="task-list">
             {filteredTasks.length === 0 ? (
-              <UndefinedTaskComponent />
+
+              <div className="empty-state-container">
+                <h2>No tasks yet. Time to create!</h2>
+              </div>
+
             ) : (
               filteredTasks.map(task => (
                 <TaskComponent 

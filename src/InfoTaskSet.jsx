@@ -7,6 +7,7 @@ function InfoTaskSet({ onAddTask, onEditTask, setInfoTask, taskToEdit }) {
     const [category, setCategory] = useState(taskToEdit ? taskToEdit.category : 'Personal');
     const [taskDueDate, setTaskDueDate] = useState(taskToEdit ? taskToEdit.date : '');
     const [taskDescription, setTaskDescription] = useState(taskToEdit ? taskToEdit.description : '');
+    const [erroMessage, setErroMessage] = useState('')
     
     const [priority, setPriority] = useState(taskToEdit && taskToEdit.priority ? `${taskToEdit.priority} Priority` : 'Medium Priority');
     
@@ -21,7 +22,7 @@ function InfoTaskSet({ onAddTask, onEditTask, setInfoTask, taskToEdit }) {
 
     const handleSaveTask = () => {
         if (!taskName.trim()) {
-            alert("Please enter a Task Name.");
+            setErroMessage('Insira um titulo!')
             return;
         }
 
@@ -52,7 +53,13 @@ function InfoTaskSet({ onAddTask, onEditTask, setInfoTask, taskToEdit }) {
 
                 <div className="form-group">
                     <label>Task Name</label>
-                    <input type="text" placeholder="What needs to be done?" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
+                    <input 
+                    type="text" 
+                    placeholder="What needs to be done?" 
+                    value={taskName} 
+                    onChange={(e) => setTaskName(e.target.value)} 
+                    />
+                    {erroMessage && (<strong>{erroMessage}</strong>)}
                 </div>
 
                 <div className="form-group">
