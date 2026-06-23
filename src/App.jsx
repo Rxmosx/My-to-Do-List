@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import TaskComponent from './TaskComponent';
+import ProjectComponent from './ProjectComponent';
 import InfoTaskSet from './InfoTaskSet';
+import InfoProjectSet from './InfoProjectSet';
 import './style/App.css';
 import UndefinedTaskComponent from './UndefinedTaskComponent';
 
@@ -9,17 +11,42 @@ function App() {
     const savedTasks = localStorage.getItem('my-todo-tasks');
     return savedTasks ? JSON.parse(savedTasks) : [];
   });
+
+  const [projects, setProjects] = useState(() => {
+    const savedProjects = localStorage.getItem('my-todo-projects');
+    return savedProjects ? JSON.parse(savedProjects) : [];
+  });
   
-  const [isSetting, setIsSetting] = useState(false);
+  const [isSettingTask, setIsSettingTask] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null); 
+  const [projectToEdit, setProjectToEdit] = useState(null);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+
+  const [isSettingProject, setIsSettingProject] = useState(false)
+
   const [activeFilter, setActiveFilter] = useState('All Tasks');
   const [search, setSearch] = useState('');
-  
-
-  const [taskToEdit, setTaskToEdit] = useState(null); 
 
   useEffect(() => {
     localStorage.setItem('my-todo-tasks', JSON.stringify(tasks));
   }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem('my-todo-projects', JSON.stringify(projects));
+  }, [projects]);
+
+
+  const onAddProject = (projectName, projectDescription, projectCategory, projectTasks) => {
+    const newProject = {
+      id: Date.now(),
+      name: projectName,
+      description: projectDescription,
+      category: projectCategory,
+      tasks: [...projectTasks],
+    };
+    setProjects([...projects, newProject]);
+  }
+
 
   const onAddTask = (taskName, taskDescription, taskDueDate, priority, category) => {
     const newTask = {
@@ -52,6 +79,61 @@ function App() {
     }, 400); 
   };
 
+  const onEditProject = (projectId, projectName, projectDescription, projectCategory, projectTasks) => {
+    setProjects(projects.map(project => project.id === projectId ? {
+      ...project,
+      name: projectName,
+      description: projectDescription,  
+      category: projectCategory,
+      tasks: [...projectTasks],
+    } : project));
+  };
+  
+
+  const onRemoveProject = (projectId) => {
+    setProjects(prevProjects => prevProjects.filter(project => project.id !== projectId));
+  };
+
+  const handleConfirmDelete = () => {
+    if (projectToDelete) {
+      onRemoveProject(projectToDelete.id);
+      setProjectToDelete(null); 
+    }
+  };
+
+
+  const onRemoveTaskFromProject = (projectId, taskId) => {
+    setTimeout(() => {
+      setProjects(prevProjects => prevProjects.map(project => {
+        if (project.id === projectId) {
+          return {
+            ...project,
+            tasks: project.tasks.filter(task => task.id !== taskId)
+          };
+        }
+        return project;
+      }));
+    }, 400);
+  };
+
+  
+  const onEditTaskInProject = (projectId, updatedTaskData) => {
+    
+    setTaskToEdit(updatedTaskData);
+    setIsSettingTask(true);
+    
+
+    setProjects(prevProjects => prevProjects.map(project => {
+      if (project.id === projectId) {
+        return {
+          ...project,
+          tasks: project.tasks.map(t => t.id === updatedTaskData.id ? { ...t, ...updatedTaskData } : t)
+        };
+      }
+      return project;
+    }));
+  };
+
 
   const filteredTasks = tasks.filter(task => {
     let matchesSidebar = true;
@@ -79,17 +161,65 @@ function App() {
     return matchesSidebar && matchesSearch;
   });
 
+  const filteredProjects = projects.filter(project => {
+    let matchesSidebar = true;
+
+    if (activeFilter !== 'All Tasks' && activeFilter !== 'Today' && activeFilter !== 'Upcoming') {
+      matchesSidebar = project.category === activeFilter;
+    }
+
+    const matchesSearch = 
+      project.name.toLowerCase().includes(search.toLowerCase()) ||
+      (project.description && project.description.toLowerCase().includes(search.toLowerCase()))
+    ;
+
+    return matchesSidebar && matchesSearch;
+  });
+
 
   const handleOpenCreateModal = () => {
     setTaskToEdit(null);
-    setIsSetting(true);
+    setIsSettingTask(true);
   };
 
   
   const handleOpenEditModal = (task) => {
     setTaskToEdit(task);
-    setIsSetting(true);
+    setIsSettingTask(true);
   };
+
+  const handleOpenCreateProjectModal = () => {
+    setProjectToEdit(null);
+    setIsSettingProject(true);
+  };
+
+  const handleOpenEditProjectModal = (project) => {
+    setProjectToEdit(project);
+    setIsSettingProject(true);
+  };
+
+
+  const onAttachTaskToProject = (projectId, taskId) => {
+ 
+    const taskToMove = tasks.find(t => t.id === taskId);
+    if (!taskToMove) return;
+
+    
+    setProjects(prevProjects => prevProjects.map(project => {
+      if (project.id === projectId) {
+        
+        const alreadyHasTask = project.tasks.some(t => t.id === taskId);
+        return {
+          ...project,
+          tasks: alreadyHasTask ? project.tasks : [...project.tasks, taskToMove]
+        };
+      }
+      return project;
+    }));
+
+    setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId));
+  };
+
 
   return (
     <>
@@ -97,6 +227,7 @@ function App() {
         <aside className="sidebar">
           
           <h1>My To-<span>Do</span> List</h1>
+
           <nav className="sidebar-menu">
             <p 
             className={activeFilter === 'All Tasks' ? 'active' : ''} 
@@ -124,6 +255,8 @@ function App() {
             className={activeFilter === 'Shopping' ? 'active' : ''} 
             onClick={() => setActiveFilter('Shopping')}>Shopping</p>
           </nav>
+
+          <button className="btn-project" onClick={() => setIsSettingProject(true)}>Create Project</button>
         </aside>
 
         <div className="main-content">
@@ -140,33 +273,84 @@ function App() {
           </div>
 
           <div className="task-list">
-            {filteredTasks.length === 0 ? (
+            {filteredTasks.length === 0  && filteredProjects.length === 0 ? (
 
               <div className="empty-state-container">
-                <h2>No tasks yet. Time to create!</h2>
+                <h2>No items yet. Time to create!</h2>
               </div>
 
             ) : (
-              filteredTasks.map(task => (
-                <TaskComponent 
-                  key={task.id} 
-                  task={task} 
-                  onRemoveTask={onRemoveTask}
-                  onEdit={handleOpenEditModal}
-                />
-              ))
+
+              <>
+                {filteredTasks.map(task => (
+                  <TaskComponent 
+                    key={task.id} 
+                    task={task} 
+                    onRemoveTask={onRemoveTask}
+                    onEdit={handleOpenEditModal}
+                  />
+                ))}
+
+                {filteredProjects.map(project => (
+                  <ProjectComponent 
+                    key={project.id}
+                    project={project} 
+                    onRemoveProject={onRemoveProject}
+                    onEditProject={handleOpenEditProjectModal}
+                    onRemoveTaskFromProject={onRemoveTaskFromProject}
+                    onEditTaskInProject={onEditTaskInProject}
+                    onAttachTask={onAttachTaskToProject}
+                    onRemoveProjectClick={setProjectToDelete}
+                  />
+                ))}
+
+                </>
             )}
+
           </div>
         </div>
       </div>
 
-      {isSetting && (
+      {isSettingTask && (
           <InfoTaskSet 
             onAddTask={onAddTask} 
             onEditTask={onEditTask} 
-            setInfoTask={setIsSetting} 
+            setInfoTask={setIsSettingTask} 
             taskToEdit={taskToEdit} 
           />
+      )}
+      {isSettingProject && (
+        <InfoProjectSet 
+          onAddProject={onAddProject}
+          onEditProject={onEditProject}
+          setInfoProject={setIsSettingProject}
+          projectToEdit={projectToEdit}
+        />
+      )}
+      
+      {projectToDelete && (
+        <div className="popup-overlay" onClick={() => setProjectToDelete(null)}>
+          <div className="popup-glass" onClick={(e) => e.stopPropagation()}>
+          
+              <h3>Delete Project?</h3>
+              <p>
+                Are you sure you want to delete <strong>"{projectToDelete.name}"</strong>? 
+                This will permanently erase the project and all of its sub-tasks.
+              </p>
+            
+              <div className="popup-actions">
+
+                <button className="popup-btn-cancel" onClick={() => setProjectToDelete(null)}>
+                  Cancel
+                </button>
+
+                <button className="popup-btn-delete" onClick={handleConfirmDelete}>
+                  Delete
+                </button>
+
+              </div>
+          </div>
+        </div>
       )}
     </>
   );

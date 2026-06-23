@@ -182,14 +182,14 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   min-width: 120px;
-  z-index: 50;
+  z-index: 999;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
   animation: slideDownMenu 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .task-dropdown p {
   margin: 0;
-  padding: 10px 16px;
+  padding: 10px 20px;
   color: var(--text-dark);
   font-size: 0.9rem;
   font-weight: 500;
@@ -197,6 +197,7 @@
   transition: all 0.2s ease;
   border-radius: 8px;
   border: none;
+  z-index: 100;
 }
 
 .task-dropdown p:hover {

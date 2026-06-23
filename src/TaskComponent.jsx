@@ -4,9 +4,13 @@ import { useState } from 'react';
 
 function TaskComponent({ task, onRemoveTask, onEdit }) {  
   const [isRemoving, setIsRemoving] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // NOVO: Controla a aba
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const priorityClass = task.priority ? task.priority.toLowerCase() : 'medium';
+
+  const handleDragStart = (e) => {
+    e.dataTransfer.setData("text/plain", task.id.toString());
+  };
 
   const handleCheck = (e) => {
     e.stopPropagation(); 
@@ -29,6 +33,9 @@ function TaskComponent({ task, onRemoveTask, onEdit }) {
     <div 
       className={`task-item ${isRemoving ? 'checked' : ''}`}
       onMouseLeave={() => setIsMenuOpen(false)}
+      draggable="true"    
+      onDragStart={handleDragStart}
+      style={{ cursor: 'grab' }}
     >
       <div className='task-main'>
         <div className="task-details">

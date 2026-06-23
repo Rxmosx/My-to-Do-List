@@ -171,6 +171,22 @@ body::after {
   transform: translateY(-1px);
 }
 
+.btn-project {
+  margin-top: auto;
+  width: 100%;      
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-project:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+}
 
 .task-list {
   display: flex;
@@ -208,17 +224,20 @@ body::after {
   }
 
   .sidebar {
+    display: flex;
+    flex-direction: column;
     border-right: none;
     border-bottom: 1px solid var(--glass-border); 
     padding: 16px 24px;
-    height: 45px; 
+    height: 60px;
+    box-sizing: border-box;
     overflow: hidden;
     transition: height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     background: var(--glass-bg-sidebar);
   }
 
   .sidebar:hover {
-    height: 155px;
+    height: 235px;
     background: rgba(15, 23, 42, 0.6);
   }
 
@@ -235,20 +254,35 @@ body::after {
     flex-wrap: wrap; 
     gap: 8px;
     opacity: 0;
+
     transform: translateY(-10px);
     transition: opacity 0.2s ease, transform 0.3s ease;
     pointer-events: none;
   }
 
-  .sidebar:hover .sidebar-menu {
+  .btn-project {
+    margin-top: 12px;
+    width: auto;      
+    opacity: 0;      
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar:hover .btn-project {
+    opacity: 1;
+  }
+
+  .sidebar:hover .sidebar-menu{
     opacity: 1;
     transform: translateY(0); 
     pointer-events: auto;
   }
+
+  
   
   .sidebar-divider {
     display: none;
   }
+
 
   .main-content {
     padding: 20px;
