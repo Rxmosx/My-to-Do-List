@@ -2,7 +2,7 @@ import './style/taskComponent.css';
 import './style/App.css';
 import { useState } from 'react';
 
-function TaskComponent({ task, onRemoveTask, onEdit }) {  
+function TaskComponent({ task, onRemoveTask, onEdit, project }) {  
   const [isRemoving, setIsRemoving] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
@@ -10,7 +10,15 @@ function TaskComponent({ task, onRemoveTask, onEdit }) {
 
   const handleDragStart = (e) => {
     e.dataTransfer.setData("text/plain", task.id.toString());
+    
+    if (project) {
+      e.dataTransfer.setData("sourceProjectId", project.id.toString())
+    } else {
+      e.dataTransfer.setData("sourceProjectId", "global");
+    }
+
   };
+
 
   const handleCheck = (e) => {
     e.stopPropagation(); 

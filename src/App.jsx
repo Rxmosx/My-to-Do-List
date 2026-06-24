@@ -7,6 +7,14 @@ import './style/App.css';
 import UndefinedTaskComponent from './UndefinedTaskComponent';
 
 function App() {
+  
+  const [isSettingTask, setIsSettingTask] = useState(false);
+  const [isSettingProject, setIsSettingProject] = useState(false)
+
+  const [taskToEdit, setTaskToEdit] = useState(null); 
+  const [projectToEdit, setProjectToEdit] = useState(null);
+  const [projectToDelete, setProjectToDelete] = useState(null);
+  
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem('my-todo-tasks');
     return savedTasks ? JSON.parse(savedTasks) : [];
@@ -17,13 +25,6 @@ function App() {
     return savedProjects ? JSON.parse(savedProjects) : [];
   });
   
-  const [isSettingTask, setIsSettingTask] = useState(false);
-  const [taskToEdit, setTaskToEdit] = useState(null); 
-  const [projectToEdit, setProjectToEdit] = useState(null);
-  const [projectToDelete, setProjectToDelete] = useState(null);
-
-  const [isSettingProject, setIsSettingProject] = useState(false)
-
   const [activeFilter, setActiveFilter] = useState('All Tasks');
   const [search, setSearch] = useState('');
 
@@ -95,6 +96,7 @@ function App() {
   };
 
   const handleConfirmDelete = () => {
+
     if (projectToDelete) {
       onRemoveProject(projectToDelete.id);
       setProjectToDelete(null); 
@@ -103,6 +105,7 @@ function App() {
 
 
   const onRemoveTaskFromProject = (projectId, taskId) => {
+
     setTimeout(() => {
       setProjects(prevProjects => prevProjects.map(project => {
         if (project.id === projectId) {
@@ -200,8 +203,23 @@ function App() {
 
 
   const onAttachTaskToProject = (projectId, taskId) => {
- 
-    const taskToMove = tasks.find(t => t.id === taskId);
+    let taskToMove = null;
+
+    taskToMove = tasks.find(t => t.id === taskId);
+
+    if (!taskToMove) {
+
+      for (const project of projects) {
+
+        const found = project.tasks?.find(t => t.id === taskId);
+
+        if (found) {
+          taskToMove = found;
+          break; 
+        }
+      }
+    }
+
     if (!taskToMove) return;
 
     

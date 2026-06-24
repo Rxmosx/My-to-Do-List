@@ -46,13 +46,25 @@ function ProjectComponent({ project, onRemoveProject, onEditProject, onRemoveTas
     const handleDrop = (e) => {
         e.preventDefault();
         setIsDragOver(false);
-    
+
+        const sourceProject = e.dataTransfer.getData("sourceProjectId");
         const taskId = Number(e.dataTransfer.getData("text/plain"));
 
-        if (taskId) {
+        if (!taskId) return;
+
+        if (sourceProject && sourceProject !== "global") {
+            const sourceProjectId = Number(sourceProject);
+
+            if (sourceProjectId === project.id) return;
+
+            onRemoveTaskFromProject(sourceProjectId, taskId);
+            onAttachTask(project.id, taskId);
+        } else {
             onAttachTask(project.id, taskId);
         }
+
     };
+
 
   return (
     <>
@@ -106,17 +118,17 @@ function ProjectComponent({ project, onRemoveProject, onEditProject, onRemoveTas
             <div className={`project-tasks-list ${projectOpen ? 'project-open-tasks' : ''}`}>
 
                 {project.tasks && project.tasks.length > 0 ? (
-                project.tasks.map(task => (
-                    <TaskComponent 
-                    key={task.id} 
-                    task={task} 
-                    
-                    onRemoveTask={(taskId) => onRemoveTaskFromProject(project.id, taskId)}
-                    onEdit={(taskData) => onEditTaskInProject(project.id, taskData)}
-                    />
-                ))
+                    project.tasks.map(task => (
+                        <TaskComponent 
+                            key={task.id} 
+                            task={task} 
+                            onRemoveTask={(taskId) => onRemoveTaskFromProject(project.id, taskId)}
+                            onEdit={(taskData) => onEditTaskInProject(project.id, taskData)}
+                            project={project}
+                        />
+                    ))
                 ) : (
-                <p className="project-empty-tasks">No tasks inside this project yet.</p>
+                    <p className="project-empty-tasks">No tasks inside this project yet.</p>
                 )}
             </div>
         </div>
