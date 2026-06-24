@@ -35,6 +35,7 @@ function ProjectComponent({ project, onRemoveProject, onEditProject, onRemoveTas
 
     const handleDragOver = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         setIsDragOver(true);
         setProjectOpen(true);
     };
@@ -45,24 +46,15 @@ function ProjectComponent({ project, onRemoveProject, onEditProject, onRemoveTas
 
     const handleDrop = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         setIsDragOver(false);
 
-        const sourceProject = e.dataTransfer.getData("sourceProjectId");
+        const fromList = e.dataTransfer.getData("sourceProjectId");
         const taskId = Number(e.dataTransfer.getData("text/plain"));
 
-        if (!taskId) return;
-
-        if (sourceProject && sourceProject !== "global") {
-            const sourceProjectId = Number(sourceProject);
-
-            if (sourceProjectId === project.id) return;
-
-            onRemoveTaskFromProject(sourceProjectId, taskId);
-            onAttachTask(project.id, taskId);
-        } else {
-            onAttachTask(project.id, taskId);
+        if (taskId && fromList) {
+            onAttachTask(taskId, fromList, project.id.toString());
         }
-
     };
 
 

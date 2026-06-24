@@ -11,7 +11,8 @@ function App() {
   const [isSettingTask, setIsSettingTask] = useState(false);
   const [isSettingProject, setIsSettingProject] = useState(false)
 
-  const [taskToEdit, setTaskToEdit] = useState(null); 
+  const [taskToEdit, setTaskToEdit] = useState(null);   
+  const [editingProjectSourceId, setEditingProjectSourceId] = useState(null);
   const [projectToEdit, setProjectToEdit] = useState(null);
   const [projectToDelete, setProjectToDelete] = useState(null);
   
@@ -64,14 +65,34 @@ function App() {
 
 
   const onEditTask = (taskId, taskName, taskDescription, taskDueDate, priority, category) => {
-    setTasks(tasks.map(task => task.id === taskId ? {
-      ...task,
+    const updatedData = {
+      id: taskId,
       name: taskName,
       description: taskDescription,
       date: taskDueDate || "",
       priority: priority.replace(" Priority", ""),
       category: category
-    } : task));
+    };
+
+    if (editingProjectSourceId) {
+      setProjects(prevProjects => prevProjects.map(project => {
+        if (!project || project.id !== editingProjectSourceId) return project;
+        
+        return {
+          ...project,
+          tasks: project.tasks.map(task => 
+            task.id === taskId ? { ...task, ...updatedData } : task
+          )
+        };
+      }));
+    
+      setEditingProjectSourceId(null); 
+    } else {
+     
+      setTasks(tasks.map(task => 
+        task.id === taskId ? { ...task, ...updatedData } : task
+      ));
+    }
   };
 
   const onRemoveTask = (taskId) => {
@@ -108,6 +129,8 @@ function App() {
 
     setTimeout(() => {
       setProjects(prevProjects => prevProjects.map(project => {
+        if (!project) return project;
+
         if (project.id === projectId) {
           return {
             ...project,
@@ -123,18 +146,8 @@ function App() {
   const onEditTaskInProject = (projectId, updatedTaskData) => {
     
     setTaskToEdit(updatedTaskData);
+    setEditingProjectSourceId(projectId);
     setIsSettingTask(true);
-    
-
-    setProjects(prevProjects => prevProjects.map(project => {
-      if (project.id === projectId) {
-        return {
-          ...project,
-          tasks: project.tasks.map(t => t.id === updatedTaskData.id ? { ...t, ...updatedTaskData } : t)
-        };
-      }
-      return project;
-    }));
   };
 
 
@@ -166,6 +179,8 @@ function App() {
 
   const filteredProjects = projects.filter(project => {
     let matchesSidebar = true;
+
+    if(!project) return false;
 
     if (activeFilter !== 'All Tasks' && activeFilter !== 'Today' && activeFilter !== 'Upcoming') {
       matchesSidebar = project.category === activeFilter;
@@ -202,41 +217,63 @@ function App() {
   };
 
 
-  const onAttachTaskToProject = (projectId, taskId) => {
+  const onMoveTask = (taskId, fromList, toList) => {
+    if (fromList === toList) return; 
+
     let taskToMove = null;
 
-    taskToMove = tasks.find(t => t.id === taskId);
+    if (fromList === "global") {
 
-    if (!taskToMove) {
-
-      for (const project of projects) {
-
-        const found = project.tasks?.find(t => t.id === taskId);
-
-        if (found) {
-          taskToMove = found;
-          break; 
-        }
-      }
+      taskToMove = tasks.find(t => t.id === taskId);
+    } else {
+      const sourceProject = projects.find(p => p && p.id === Number(fromList));
+      taskToMove = sourceProject?.tasks?.find(t => t.id === taskId);
     }
 
     if (!taskToMove) return;
 
     
+    if (toList === "global") {
+      setTasks(prev => [...prev, taskToMove]);
+    }
+    if (fromList === "global") {
+      setTasks(prev => prev.filter(t => t.id !== taskId));
+    }
+
+    
     setProjects(prevProjects => prevProjects.map(project => {
-      if (project.id === projectId) {
-        
+      if (!project) return project;
+
+     
+      if (project.id === Number(toList)) {
         const alreadyHasTask = project.tasks.some(t => t.id === taskId);
         return {
           ...project,
           tasks: alreadyHasTask ? project.tasks : [...project.tasks, taskToMove]
         };
       }
+
+      
+      if (project.id === Number(fromList)) {
+        return {
+          ...project,
+          tasks: project.tasks.filter(t => t.id !== taskId)
+        };
+      }
+
       return project;
     }));
+};
 
-    setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId));
-  };
+  const onDropGlobal = (e) => {
+    e.preventDefault();
+    const fromList = e.dataTransfer.getData("sourceProjectId");
+    const taskId = Number(e.dataTransfer.getData("text/plain"));
+
+    if (taskId && fromList) {
+      onMoveTask(taskId, fromList, "global");
+    }
+};
 
 
   return (
@@ -277,7 +314,10 @@ function App() {
           <button className="btn-project" onClick={() => setIsSettingProject(true)}>Create Project</button>
         </aside>
 
-        <div className="main-content">
+        <div className="main-content"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={onDropGlobal}
+        >
           <div className="top-bar">
             <input 
               type="text" 
@@ -317,7 +357,7 @@ function App() {
                     onEditProject={handleOpenEditProjectModal}
                     onRemoveTaskFromProject={onRemoveTaskFromProject}
                     onEditTaskInProject={onEditTaskInProject}
-                    onAttachTask={onAttachTaskToProject}
+                    onAttachTask={onMoveTask}
                     onRemoveProjectClick={setProjectToDelete}
                   />
                 ))}
